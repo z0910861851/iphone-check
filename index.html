@@ -3,105 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPhone 專業資產鑑定報告</title>
+    <title>iPhone 專業資產鑑定系統</title>
     <style>
         :root { --apple-blue: #0071e3; --bg-card: #1c1c1e; --text-gray: #86868b; }
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
         .box { width: 100%; max-width: 420px; }
         .t { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 25px; letter-spacing: -0.5px; }
+        
+        /* 表單卡片 */
         .card { background: var(--bg-card); padding: 20px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #333; }
         label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 8px; font-weight: 600; padding-left: 5px; }
-        select, input { width: 100%; padding: 14px; background: #2c2c2e; border: none; border-radius: 12px; color: #fff; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        select, input { width: 100%; padding: 14px; background: #2c2c2e; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        select:focus, input:focus { border-color: var(--apple-blue); }
         .row { display: flex; gap: 12px; }
-        #go { width: 100%; padding: 18px; background: var(--apple-blue); color: #fff; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; }
-        #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 20px; padding: 25px; animation: slideUp 0.3s; }
-        @keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        
+        /* 按鈕 */
+        #go { width: 100%; padding: 18px; background: var(--apple-blue); color: #fff; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        #go:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* 結果顯示區 */
+        #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 20px; padding: 25px; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .score-circle { width: 90px; height: 90px; border-radius: 50%; border: 6px solid var(--apple-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
         .score { font-size: 32px; font-weight: 800; color: var(--apple-blue); }
-        #ai-section { display:none; margin-top:20px; background:#f2f2f7; padding:15px; border-radius:15px; border-left: 5px solid var(--apple-blue); }
-        .admin-box { margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #333; }
-        #apiKey { background: #1c1c1e; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 8px; width: 85%; font-size: 12px; }
-    </style>
-</head>
-<body>
-
-<div class="box">
-    <div class="t">iPhone 資產價值精算</div>
-    <div class="card">
-        <label>設備型號</label>
-        <select id="m">
-            <optgroup label="iPhone 16 系列">
-                <option value="16PM" data-p="44900">iPhone 16 Pro Max</option>
-                <option value="16P" data-p="36900">iPhone 16 Pro</option>
-                <option value="16" data-p="29900">iPhone 16</option>
-            </optgroup>
-            <option value="15" data-p="29900">iPhone 15 系列</option>
-            <option value="14" data-p="27900">iPhone 14 系列</option>
-        </select>
-        <div class="row">
-            <div style="flex:1"><label>持有年數</label><input type="number" id="yr" value="2"></div>
-            <div style="flex:1"><label>電池健康度 %</label><input type="number" id="ba" value="82"></div>
-        </div>
-        <label>現場鑑定回收價 (NT$)</label>
-        <input type="number" id="pr" placeholder="請輸入金額">
-        <button id="go" onclick="runCheck()">啟動 AI 深度鑑定</button>
-    </div>
-
-    <div id="res">
-        <div class="score-circle"><div class="score" id="sS">--</div></div>
-        <div style="text-align:center; font-size:12px; color:#86868b; margin-bottom:15px;">資產變現建議分數</div>
-        <div id="ai-section">
-            <b style="color:#0071e3;">🤖 AI 市場動態分析：</b>
-            <div id="ai-loading" style="display:none; font-size:12px; color:#86868b;">專家連線中...</div>
-            <div id="ai-output" style="margin-top:10px; font-size:14px; line-height:1.6;"></div>
-        </div>
-    </div>
-
-    <div class="admin-box">
-        <label style="color:#555;">系統金鑰管理</label>
-        <input type="password" id="apiKey" placeholder="在此貼上 Gemini API Key">
-    </div>
-</div>
-
-<script>
-async function runCheck() {
-    const p = document.getElementById('pr').value;
-    const key = document.getElementById('apiKey').value;
-    if(!p) { alert("請輸入金額"); return; }
-    
-    document.getElementById('res').style.display = "block";
-    const output = document.getElementById('ai-output');
-    const loading = document.getElementById('ai-loading');
-    
-    if(!key) {
-        output.innerHTML = "<span style='color:red;'>請在下方填寫 API Key 才能啟用 AI 建議。</span>";
-        document.getElementById('ai-section').style.display = "block";
-        return;
-    }
-
-    document.getElementById('ai-section').style.display = "block";
-    loading.style.display = "block";
-    output.innerText = "";
-
-    const modelName = document.getElementById('m').options[document.getElementById('m').selectedIndex].text;
-    const prompt = `你是手機市場分析師。iPhone機型：${modelName}，回收價：NT$${p}。請從2026年市場行情分析此價格是否划算，並給出建議與一個%分數。100字內。`;
-
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-        });
-        const data = await response.json();
-        const text = data.candidates[0].content.parts[0].text;
-        output.innerText = text;
-        const score = text.match(/\d+%/);
-        document.getElementById('sS').innerText = score ? score[0] : "95%";
-    } catch (e) {
-        output.innerText = "連線失敗，請檢查 Key 是否正確且沒空格。";
-    }
-    loading.style.display = "none";
-}
-</script>
-</body>
-</html>
+        .item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        
+        /* AI 建議區塊 */
+        #ai-section { display:none; margin-top:20
