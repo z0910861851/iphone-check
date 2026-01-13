@@ -9,31 +9,19 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
         .box { width: 100%; max-width: 420px; }
         .t { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 25px; letter-spacing: -0.5px; }
-        
-        /* 表單卡片 */
         .card { background: var(--bg-card); padding: 20px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #333; }
         label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 8px; font-weight: 600; padding-left: 5px; }
         select, input { width: 100%; padding: 14px; background: #2c2c2e; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        select:focus, input:focus { border-color: var(--apple-blue); }
         .row { display: flex; gap: 12px; }
-        
-        /* 按鈕 */
         #go { width: 100%; padding: 18px; background: var(--apple-blue); color: #fff; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         #go:active { opacity: 0.8; transform: scale(0.98); }
-
-        /* 結果顯示區 */
         #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 20px; padding: 25px; animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         .score-circle { width: 90px; height: 90px; border-radius: 50%; border: 6px solid var(--apple-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
         .score { font-size: 32px; font-weight: 800; color: var(--apple-blue); }
         .item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-        
-        /* AI 建議區塊 */
         #ai-section { display:none; margin-top:20px; background:#f2f2f7; padding:18px; border-radius:15px; border-left: 5px solid var(--apple-blue); }
         #ai-output { font-size: 15px; line-height: 1.6; color: #1c1c1e; white-space: pre-wrap; }
-
-        /* 金鑰管理區 */
         .admin-area { margin-top: 60px; padding: 20px; border-top: 1px solid #333; text-align: center; }
         #apiKey { background: #1c1c1e; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 8px; width: 90%; font-size: 12px; text-align: center; }
     </style>
@@ -42,7 +30,6 @@
 
 <div class="box">
     <div class="t">iPhone 資產價值診斷</div>
-
     <div class="card">
         <label>設備型號</label>
         <select id="m">
@@ -56,85 +43,73 @@
                 <option value="15" data-p="29900">iPhone 15</option>
             </optgroup>
             <option value="14" data-p="27900">iPhone 14 系列</option>
-            <option value="13" data-p="22900">iPhone 13 系列</option>
-            <option value="12" data-p="19900">iPhone 12 系列</option>
         </select>
-
         <div class="row">
-            <div style="flex:1"><label>持有年數</label><input type="number" id="yr" value="2" step="0.5"></div>
-            <div style="flex:1"><label>電池健康度 %</label><input type="number" id="ba" value="82"></div>
+            <div style="flex:1"><label>持有年數</label><input type="number" id="yr" value="1" step="0.5"></div>
+            <div style="flex:1"><label>電池健康度 %</label><input type="number" id="ba" value="90"></div>
         </div>
-
         <label>現場鑑定回收價 (NT$)</label>
-        <input type="number" id="pr" placeholder="輸入回收金額" pattern="\d*">
-        
+        <input type="number" id="pr" placeholder="輸入金額">
         <button id="go" onclick="runCheck()">開始 AI 價值分析</button>
     </div>
 
     <div id="res">
         <div class="score-circle"><div class="score" id="sS">--</div></div>
         <div style="text-align:center; font-size:12px; color:var(--text-gray); margin-bottom:15px;">資產活化建議指數</div>
-        
-        <div class="item"><span>預計領回現金</span><b id="sC" style="color:#0071e3; font-size:18px;"></b></div>
-        <div class="item"><span>每月持有成本</span><b id="sM"></b></div>
-
+        <div class="item"><span>預計領回現金</span><b id="sC" style="color:#0071e3; font-size:18px;">NT$ 0</b></div>
+        <div class="item"><span>每月持有成本</span><b id="sM">NT$ 0</b></div>
         <div id="ai-section">
             <div style="display:flex; align-items:center; margin-bottom:8px;">
                 <span style="margin-right:8px;">🤖</span><b style="color:var(--apple-blue);">AI 專家行情分析</b>
             </div>
-            <div id="ai-loading" style="display:none; font-size:13px; color:var(--text-gray);">正在連線全球數據庫分析中...</div>
+            <div id="ai-loading" style="display:none; font-size:13px; color:var(--text-gray);">分析中...</div>
             <div id="ai-output"></div>
         </div>
     </div>
 
     <div class="admin-area">
-        <label>系統引擎設定 (請貼上 API Key)</label>
-        <input type="password" id="apiKey" placeholder="AIzaSy...">
-        <p style="font-size:10px; color:#555; margin-top:10px;">金鑰必須以 AIzaSy 開頭，請確保完整複製。</p>
+        <label>系統引擎設定</label>
+        <input type="password" id="apiKey" placeholder="在此貼上 API Key">
+        <p style="font-size:10px; color:#555; margin-top:10px;">金鑰僅儲存在此裝置，不會上傳公開。</p>
     </div>
 </div>
 
 <script>
 async function runCheck() {
     const prInput = document.getElementById('pr').value;
-    if(!prInput) { alert("請輸入回收金額"); return; }
-
+    if(!prInput) { alert("請輸入金額"); return; }
+    
     const p = parseFloat(prInput);
     const yr = parseFloat(document.getElementById('yr').value) || 1;
     const ba = parseInt(document.getElementById('ba').value);
     const sel = document.getElementById('m');
     const modelName = sel.options[sel.selectedIndex].text;
     const orig = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-p'));
-    
-    // 取得並清理 Key (刪除前後空格)
-    const rawKey = document.getElementById('apiKey').value;
-    const key = rawKey.trim();
+    const key = document.getElementById('apiKey').value.trim();
 
-    // 顯示基礎計算結果
     document.getElementById('sC').innerText = "NT$ " + p.toLocaleString();
     document.getElementById('sM').innerText = "NT$ " + Math.floor((orig - p)/(yr * 12)).toLocaleString();
     document.getElementById('res').style.display = "block";
 
-    // AI 邏輯
     const output = document.getElementById('ai-output');
     const loading = document.getElementById('ai-loading');
-    const section = document.getElementById('ai-section');
-
+    document.getElementById('ai-section').style.display = "block";
+    
     if(!key) {
-        section.style.display = "block";
-        output.innerHTML = "<span style='color:red;'>請在下方「系統引擎設定」貼上正確的金鑰後再試一次。</span>";
-        document.getElementById('sS').innerText = "!!";
+        output.innerHTML = "<span style='color:red;'>請在下方填寫 API Key。</span>";
         return;
     }
 
-    section.style.display = "block";
     loading.style.display = "block";
     output.innerText = "";
 
     const prompt = `你是一位專業 iPhone 鑑定師。機型：${modelName}，回收價：${p}元，電池：${ba}%，已用${yr}年。請以2026年市場視角，簡短分析此價格是否划算並給出建議，最後附上一個百分比分數。`;
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        // 修正後的路徑：改用 v1 版本與 gemini-1.5-flash-latest
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
+        
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -143,19 +118,16 @@ async function runCheck() {
         const data = await response.json();
 
         if (data.error) {
-            // 具體顯示 Google 回傳的錯誤
-            output.innerHTML = `<span style="color:red;">API 錯誤：${data.error.message}<br>請確認金鑰是否完整複製。</span>`;
+            output.innerHTML = `<span style="color:red;">錯誤：${data.error.message}</span>`;
             document.getElementById('sS').innerText = "Err";
         } else {
             const aiText = data.candidates[0].content.parts[0].text;
             output.innerText = aiText;
-            // 嘗試抓取數字作為分數
             const scoreMatch = aiText.match(/\d+%/);
             document.getElementById('sS').innerText = scoreMatch ? scoreMatch[0] : "90%";
         }
     } catch (error) {
-        output.innerText = "連線失敗：請檢查網路或金鑰格式。";
-        document.getElementById('sS').innerText = "X";
+        output.innerText = "網路連線異常，請稍後再試。";
     } finally {
         loading.style.display = "none";
     }
