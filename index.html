@@ -3,20 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPhone 專業資產鑑定 (V3)</title>
+    <title>iPhone 專業資產鑑定 (Groq 極速版)</title>
     <style>
         :root { --apple-blue: #0071e3; --bg-card: #1c1c1e; --text-gray: #86868b; }
-        body { font-family: -apple-system, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
         .box { width: 100%; max-width: 420px; }
-        .t { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 25px; }
+        .t { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 25px; letter-spacing: -0.5px; }
+        
+        /* 表單卡片 */
         .card { background: var(--bg-card); padding: 20px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #333; }
-        label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 8px; font-weight: 600; }
+        label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 8px; font-weight: 600; padding-left: 5px; }
         select, input { width: 100%; padding: 14px; background: #2c2c2e; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        #go { width: 100%; padding: 18px; background: var(--apple-blue); color: #fff; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        
+        /* 按鈕 - 改為 Groq 的綠色 */
+        #go { width: 100%; padding: 18px; background: #34c759; color: #fff; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        #go:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* 結果顯示區 */
         #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 20px; padding: 25px; }
-        .score-circle { width: 90px; height: 90px; border-radius: 50%; border: 6px solid var(--apple-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
-        .score { font-size: 32px; font-weight: 800; color: var(--apple-blue); }
-        #ai-section { display:none; margin-top:20px; background:#f2f2f7; padding:18px; border-radius:15px; border-left: 5px solid var(--apple-blue); }
+        .score-circle { width: 90px; height: 90px; border-radius: 50%; border: 6px solid #34c759; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+        .score { font-size: 32px; font-weight: 800; color: #34c759; }
+        
+        /* AI 建議區塊 */
+        #ai-section { margin-top:20px; background:#f2f2f7; padding:18px; border-radius:15px; border-left: 5px solid #34c759; }
+        #ai-output { font-size: 15px; line-height: 1.6; color: #1c1c1e; white-space: pre-wrap; }
+
+        /* 金鑰管理區 */
         .admin-area { margin-top: 60px; padding: 20px; border-top: 1px solid #333; text-align: center; }
         #apiKey { background: #1c1c1e; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 8px; width: 90%; font-size: 12px; text-align: center; }
     </style>
@@ -24,68 +36,96 @@
 <body>
 
 <div class="box">
-    <div class="t">iPhone 資產價值診斷 (V3)</div>
+    <div class="t">iPhone 資產鑑定 (Groq)</div>
+
     <div class="card">
         <label>設備型號</label>
         <select id="m">
-            <option value="16PM" data-p="44900">iPhone 16 Pro Max</option>
-            <option value="16P" data-p="36900">iPhone 16 Pro</option>
-            <option value="15PM" data-p="44900">iPhone 15 Pro Max</option>
-            <option value="14" data-p="27900">iPhone 14 系列</option>
+            <option value="16PM">iPhone 16 Pro Max</option>
+            <option value="16P">iPhone 16 Pro</option>
+            <option value="15PM">iPhone 15 Pro Max</option>
+            <option value="14">iPhone 14 系列</option>
         </select>
-        <div style="display:flex; gap:10px;">
-            <div style="flex:1"><label>持有年數</label><input type="number" id="yr" value="1"></div>
-            <div style="flex:1"><label>電池健康度 %</label><input type="number" id="ba" value="90"></div>
-        </div>
+
+        <label>電池健康度 %</label>
+        <input type="number" id="ba" value="85">
+
         <label>現場鑑定回收價 (NT$)</label>
         <input type="number" id="pr" placeholder="輸入金額">
-        <button id="go" onclick="runCheck()">啟動 AI 鑑定</button>
+        
+        <button id="go" onclick="runCheck()">啟動極速 AI 鑑定</button>
     </div>
 
     <div id="res">
         <div class="score-circle"><div class="score" id="sS">--</div></div>
+        <div style="text-align:center; font-size:12px; color:var(--text-gray); margin-bottom:15px;">AI 建議行情指數</div>
+        
         <div id="ai-section">
-            <b style="color:#0071e3;">🤖 AI 市場動態分析：</b>
-            <div id="ai-output" style="margin-top:10px; font-size:14px;"></div>
+            <div style="display:flex; align-items:center; margin-bottom:8px;">
+                <b style="color:#34c759;">⚡ Groq 極速分析</b>
+            </div>
+            <div id="ai-output"></div>
         </div>
     </div>
 
     <div class="admin-area">
-        <label>系統引擎設定</label>
-        <input type="password" id="apiKey" placeholder="在此貼上 API Key">
+        <label>Groq API 金鑰 (自動儲存)</label>
+        <input type="password" id="apiKey" placeholder="gsk_..." onchange="saveKey()">
     </div>
 </div>
 
 <script>
-async function runCheck() {
+// 自動讀取儲存的金鑰
+window.onload = function() {
+    const savedKey = localStorage.getItem('groq_key');
+    if (savedKey) document.getElementById('apiKey').value = savedKey;
+}
+
+function saveKey() {
     const key = document.getElementById('apiKey').value.trim();
+    localStorage.setItem('groq_key', key);
+}
+
+async function runCheck() {
     const p = document.getElementById('pr').value;
-    if(!p) return alert("請輸入金額");
+    const key = document.getElementById('apiKey').value.trim();
+    const modelName = document.getElementById('m').options[document.getElementById('m').selectedIndex].text;
+    const battery = document.getElementById('ba').value;
+
+    if(!p || !key) { alert("請輸入金額並貼上 Groq Key"); return; }
 
     document.getElementById('res').style.display = "block";
     const output = document.getElementById('ai-output');
-    document.getElementById('ai-section').style.display = "block";
-    output.innerText = "連線中...";
+    output.innerText = "⚡ 正在連線 Groq 高速晶片分析中...";
 
     try {
-        // 這是 Google 最標準的 v1 正式版路徑
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
-        
-        const response = await fetch(url, {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: "請簡短分析iPhone回收價是否划算。" }] }] })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${key}`
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {role: "system", content: "你是一位專業 iPhone 鑑定師，請用台灣繁體中文提供精確的行情建議。"},
+                    {role: "user", content: `機型：${modelName}，回收價：${p}元，電池：${battery}%。請以2026年市場視角，在80字內簡短分析是否划算並給出建議，最後加一個分數如 [分數：90%]。`}
+                ]
+            })
         });
         
         const data = await response.json();
+        
         if (data.error) {
-            output.innerHTML = `<span style="color:red;">錯誤詳情：${data.error.message}</span>`;
+            output.innerHTML = `<span style="color:red;">錯誤：${data.error.message}</span>`;
         } else {
-            output.innerText = data.candidates[0].content.parts[0].text;
-            document.getElementById('sS').innerText = "90%";
+            const aiText = data.choices[0].message.content;
+            output.innerText = aiText;
+            const scoreMatch = aiText.match(/\d+%/);
+            document.getElementById('sS').innerText = scoreMatch ? scoreMatch[0] : "92%";
         }
     } catch (error) {
-        output.innerText = "網路異常，請確認 API Key。";
+        output.innerText = "連線失敗，請檢查網路。";
     }
 }
 </script>
