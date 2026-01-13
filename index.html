@@ -3,57 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPhone 專業資產診斷 (V14)</title>
+    <title>iPhone 專業資產診斷 (V19)</title>
     <style>
         :root { --apple-blue: #0071e3; --bg-card: #1c1c1e; --text-gray: #86868b; }
         body { font-family: -apple-system, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
         .box { width: 100%; max-width: 420px; }
-        .card { background: var(--bg-card); padding: 24px; border-radius: 22px; border: 1px solid #333; margin-bottom: 20px; }
-        label { display: block; font-size: 13px; color: var(--text-gray); margin-bottom: 8px; font-weight: 500; }
-        select, input { width: 100%; padding: 16px; background: #2c2c2e; border: 1px solid #444; border-radius: 14px; color: #fff; font-size: 17px; margin-bottom: 20px; box-sizing: border-box; outline: none; }
+        .card { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid #333; margin-bottom: 20px; }
+        label { display: block; font-size: 12px; color: var(--text-gray); margin-bottom: 6px; font-weight: 500; }
+        select, input { width: 100%; padding: 14px; background: #2c2c2e; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
         #go { width: 100%; padding: 18px; background: var(--apple-blue); color: #fff; border: none; border-radius: 16px; font-size: 18px; font-weight: 600; cursor: pointer; }
-        
-        /* 診斷報告區塊 */
-        #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 24px; padding: 28px; animation: slideUp 0.5s ease; }
+        #res { display: none; margin-top: 25px; background: #fff; color: #000; border-radius: 24px; padding: 25px; animation: slideUp 0.5s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .report-header { border-bottom: 1.5px solid #eee; padding-bottom: 15px; margin-bottom: 20px; text-align: center; }
-        .report-title { font-weight: 800; font-size: 20px; color: #1c1c1e; }
-        #ai-output { font-size: 16px; line-height: 1.8; color: #333; text-align: justify; }
-        .quote { font-style: italic; color: var(--apple-blue); font-weight: 600; margin-top: 15px; display: block; text-align: center; }
-        
-        .admin-area { margin-top: 60px; opacity: 0.1; }
-        #apiKey { background: transparent; border: none; color: #555; text-align: center; width: 100%; font-size: 10px; }
+        .finance-box { background: #f2f2f7; border-radius: 16px; padding: 15px; margin-bottom: 20px; text-align: center; border: 1px solid #ddd; }
+        .finance-val { font-size: 26px; font-weight: 800; color: var(--apple-blue); }
+        .finance-lab { font-size: 11px; color: #666; margin-top: 4px; }
+        #ai-output { font-size: 15px; line-height: 1.8; color: #333; text-align: justify; }
+        .quote { font-style: italic; color: var(--apple-blue); font-weight: 600; margin-top: 15px; display: block; text-align: center; font-size: 13px; }
+        .admin-area { margin-top: 40px; opacity: 0.05; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2 style="text-align:center; font-weight:600;">iPhone 價值轉化系統</h2>
+    <h2 style="text-align:center; font-weight:600;">iPhone 價值轉化報告</h2>
     <div class="card">
-        <label>鑑定型號</label>
+        <label>鑑定機型 (全系列補齊)</label>
         <select id="m">
-            <option>iPhone 16 Pro Max</option>
-            <option>iPhone 16 Pro</option>
-            <option>iPhone 15 Pro Max</option>
-            <option>iPhone 14 Pro Max</option>
-            <option>其他 iPhone 系列</option>
+            <optgroup label="iPhone 16 系列">
+                <option>iPhone 16 Pro Max</option><option>iPhone 16 Pro</option>
+                <option>iPhone 16 Plus</option><option>iPhone 16</option>
+            </optgroup>
+            <optgroup label="iPhone 15 系列">
+                <option>iPhone 15 Pro Max</option><option>iPhone 15 Pro</option>
+                <option>iPhone 15 Plus</option><option>iPhone 15</option>
+            </optgroup>
+            <optgroup label="iPhone 14 系列">
+                <option>iPhone 14 Pro Max</option><option>iPhone 14 Pro</option>
+                <option>iPhone 14 Plus</option><option>iPhone 14</option>
+            </optgroup>
+            <optgroup label="iPhone 13 系列">
+                <option>iPhone 13 Pro Max</option><option>iPhone 13 Pro</option>
+                <option>iPhone 13</option><option>iPhone 13 mini</option>
+            </optgroup>
+            <optgroup label="iPhone 12 系列">
+                <option>iPhone 12 Pro Max</option><option>iPhone 12 Pro</option>
+                <option>iPhone 12</option><option>iPhone 12 mini</option>
+            </optgroup>
+            <optgroup label="iPhone 11 系列">
+                <option>iPhone 11 Pro Max</option><option>iPhone 11 Pro</option><option>iPhone 11</option>
+            </optgroup>
+            <option value="Old">其他更舊款機型</option>
         </select>
-        <label>電池健康度 %</label>
-        <input type="number" id="ba" value="85">
-        <label>當前剩餘資產價值 (NT$)</label>
-        <input type="number" id="pr" placeholder="輸入鑑定金額">
-        <button id="go" onclick="runCheck()">生成智慧診斷建議</button>
+
+        <label>外觀與螢幕狀態</label>
+        <select id="cond">
+            <option value="完美">外觀完美 / 無摔無傷</option>
+            <option value="輕微使用痕跡">輕微使用痕跡 / 些微刮傷</option>
+            <option value="明顯傷痕">明顯傷痕 / 邊框掉漆</option>
+            <option value="螢幕或背蓋損壞">螢幕或背蓋損壞 (需維修)</option>
+        </select>
+
+        <div style="display:flex; gap:12px;">
+            <div style="flex:1"><label>電池健康度 %</label><input type="number" id="ba" value="85"></div>
+            <div style="flex:1"><label>鑑定回收價 (NT$)</label><input type="number" id="pr" placeholder="輸入報價"></div>
+        </div>
+        
+        <button id="go" onclick="runCheck()">生成專業診斷報告</button>
     </div>
 
     <div id="res">
-        <div class="report-header">
-            <div class="report-title">觀念同步鑑定報告</div>
+        <div class="finance-box">
+            <div style="display:flex; justify-content: space-around;">
+                <div><div class="finance-val" id="dailyCost">--</div><div class="finance-lab">升級新機/每日</div></div>
+                <div style="border-left:1px solid #ddd; padding-left:20px;"><div class="finance-val" id="monthlyCost">--</div><div class="finance-lab">升級新機/每月</div></div>
+            </div>
+            <div style="font-size: 9px; color: #999; margin-top: 10px;">(依 iPhone 16 系列建議售價分攤計算)</div>
         </div>
         <div id="ai-output"></div>
         <span class="quote">「退舊不虧，換新最對」</span>
     </div>
 
-    <div class="admin-area"><input type="password" id="apiKey" oninput="saveKey()"></div>
+    <div class="admin-area"><input type="password" id="apiKey" oninput="saveKey()" style="font-size: 8px;"></div>
 </div>
 
 <script>
@@ -69,26 +99,29 @@ function saveKey() {
 
 async function runCheck() {
     const key = document.getElementById('apiKey').value.trim();
-    const p = document.getElementById('pr').value;
+    const tradeInPrice = parseFloat(document.getElementById('pr').value);
     const model = document.getElementById('m').value;
     const ba = document.getElementById('ba').value;
+    const cond = document.getElementById('cond').value;
+    const targetPrice = 36900; // 以 16 Pro 為基準
 
-    if(!p || !key) return alert("請輸入金額與 Key");
+    if(!tradeInPrice || !key) return alert("請輸入金額與系統金鑰");
 
+    const gap = targetPrice - tradeInPrice;
+    document.getElementById('dailyCost').innerText = "$" + Math.round(gap / 365);
+    document.getElementById('monthlyCost').innerText = "$" + Math.round(gap / 12);
     document.getElementById('res').style.display = "block";
+    
     const output = document.getElementById('ai-output');
-    output.innerText = "正在同步市場觀念與資產價值分析...";
+    output.innerText = "正在進行觀念同步分析...";
 
-    // 核心指令：內化簡報邏輯，目標是「觀念同步」
-    const prompt = `你是專業的 iPhone 資產顧問。現在要對一位擁有 ${model} (電池 ${ba}%) 的客戶進行「觀念引導」。
-    目前的鑑定價值是 ${p} 元。請根據以下「Dragon Team」的簡報觀念來撰寫建議：
-    
-    1. 賦予價值：用「米酒瓶回收」比喻，這筆 ${p} 元不是賺來的，是本來就鎖在舊手機裡的「抵押金」，現在只是領出來。
-    2. 預防風險：用「輪胎安全線」比喻，電池 ${ba}% 代表已經快接近耗損臨界點，等到壞了才換，資料價值與手機殘值都會瞬間歸零。
-    3. 階段升級：用「小學課本換新」比喻，舊手機沒壞，但它的功能已經無法銜接現在的 AI 時代。升級不是浪費，是為了跟上生活的進度。
-    4. 換算思考：幫客戶計算，如果換新機，分攤下來每天只要幾十元（不到一杯飲料錢），卻能換來全新的效率與安全感。
-    
-    請用溫暖、堅定、且能引發顧客深思的繁體中文回答。不要像在賣東西，要像在幫他做「人生升級」的規劃。約 180 字。`;
+    const prompt = `你是專業 iPhone 資產顧問。客戶持有 ${model}，電池 ${ba}%，外觀 ${cond}，鑑定價 ${tradeInPrice}元。
+    請運用「Dragon Team」觀念引導：
+    1. 賦予價值：比喻為領回「米酒瓶押金」。
+    2. 安全意識：提醒就像輪胎安全線，現在是價值最高點，壞了(如螢幕)回收價就歸零。
+    3. 人生升級：比喻小學升國中換課本，換新機是為了銜接 AI 時代效率。
+    4. 財務分攤：強調升級新機每日僅 $${Math.round(gap / 365)} 元，換算下來只是少喝一杯飲料。
+    請用溫暖誠懇的繁體中文回答，強調「現在是處置資產的最佳時機」，約 170 字。`;
 
     try {
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -102,7 +135,7 @@ async function runCheck() {
         const data = await response.json();
         output.innerText = data.choices[0].message.content;
     } catch (e) {
-        output.innerText = "系統繁忙，請稍後重試。";
+        output.innerText = "連線異常，建議參考上方財務數據。";
     }
 }
 </script>
