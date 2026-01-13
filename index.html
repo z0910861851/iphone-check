@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPhone 專業資產診斷 (V27)</title>
+    <title>iPhone 專業資產診斷 (V29)</title>
     <style>
         :root { --apple-blue: #0071e3; --bg-card: #1c1c1e; --text-gray: #86868b; }
         body { font-family: -apple-system, sans-serif; background: #000; color: #fff; padding: 20px; margin: 0; display: flex; justify-content: center; }
@@ -40,6 +40,14 @@
             <optgroup label="iPhone 13 系列"><option>iPhone 13 Pro Max</option><option>iPhone 13 Pro</option><option>iPhone 13</option><option>iPhone 13 mini</option></optgroup>
             <optgroup label="iPhone 12 系列"><option>iPhone 12 Pro Max</option><option>iPhone 12 Pro</option><option>iPhone 12</option><option>iPhone 12 mini</option></optgroup>
             <optgroup label="iPhone 11 系列"><option>iPhone 11 Pro Max</option><option>iPhone 11 Pro</option><option>iPhone 11</option></optgroup>
+        </select>
+
+        <label>外觀與螢幕狀態 (已補回)</label>
+        <select id="cond">
+            <option value="完美">外觀完美 / 無摔無傷</option>
+            <option value="輕微使用痕跡">輕微使用痕跡 / 些微刮傷</option>
+            <option value="明顯傷痕">明顯傷痕 / 邊框掉漆</option>
+            <option value="螢幕或背蓋損壞">螢幕或背蓋損壞 (需維修)</option>
         </select>
 
         <div style="display:flex; gap:12px;">
@@ -83,8 +91,9 @@ function saveKey() {
 async function runCheck() {
     const key = document.getElementById('apiKey').value.trim();
     const tradeIn = parseFloat(document.getElementById('pr').value);
+    const cond = document.getElementById('cond').value;
     
-    // 更新為指定價格: iPhone 17 (256G) 售價
+    // 嚴格執行您指定的價格
     const models = [
         { name: "iPhone 17", price: 29900 },
         { name: "iPhone 17 Pro", price: 39900 },
@@ -115,16 +124,17 @@ async function runCheck() {
 
     document.getElementById('res').style.display = "block";
     const output = document.getElementById('ai-output');
-    output.innerText = "AI 資產顧問正在同步觀念...";
+    output.innerText = "AI 顧問正在同步觀念...";
 
-    const prompt = `你是專業資產顧問。客戶持有 ${document.getElementById('m').value} 回收價 ${tradeIn}元。
-    請嚴格運用以下五大觀念：
+    // 嚴格執行您指定的五大觀念話術
+    const prompt = `你是專業資產顧問。客戶持有 ${document.getElementById('m').value}，外觀 ${cond}，電池 ${document.getElementById('ba').value}%，回收價 ${tradeIn}元。
+    請嚴格運用以下五大觀念引導：
     1. 閒置即虧損：舊手機沒人使用就無法賦於價值，就像「米酒瓶」只留著空瓶不拿去換新米酒，就只是佔空間。
     2. 價值活化：強調現在回收是「止血」，將舊資產轉化為 iPhone 17 的升級資金。
     3. 費用感官：升級 iPhone 17 Pro 每天僅需 $${proDaily}，就像一杯飲料錢換來全新保固與 AI 生產力。
     4. 備用機迷思：舊機久放必壞（電池膨脹、螢幕老化），現在處分才是最聰明的決定。
     5. 給家人的迷思：引用 Adam 觀點，給家人一台變慢、電池不好的舊機不是愛，而是給他們麻煩。
-    請以 180 字內、誠懇且專業的繁體中文回答，強調「使用才賦予價值」。`;
+    請以 180 字內、誠懇專業的繁體中文回答，強調「使用才賦予價值」。`;
 
     try {
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
