@@ -106,8 +106,8 @@ async function runCheck() {
     const prompt = `你是一位專業 iPhone 鑑定師。機型：${modelName}，回收價：${p}元，電池：${ba}%，已用${yr}年。請以2026年市場視角，簡短分析此價格是否划算並給出建議，最後附上一個百分比分數。`;
 
     try {
-        // 更新點：將網址路徑中的 v1beta 改為 v1
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
+        // 修正點：使用 v1beta 並加上完整的模型版本號，這是目前最穩定的呼叫方式
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
         
         const response = await fetch(url, {
             method: 'POST',
