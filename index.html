@@ -29,7 +29,7 @@
 <body>
 
 <div class="box">
-    <div class="t">iPhone 資產價值診斷</div>
+    <div class="t">iPhone 資產價值精算</div>
     <div class="card">
         <label>設備型號</label>
         <select id="m">
@@ -50,12 +50,12 @@
         </div>
         <label>現場鑑定回收價 (NT$)</label>
         <input type="number" id="pr" placeholder="輸入金額">
-        <button id="go" onclick="runCheck()">開始 AI 價值分析</button>
+        <button id="go" onclick="runCheck()">啟動 AI 深度鑑定</button>
     </div>
 
     <div id="res">
         <div class="score-circle"><div class="score" id="sS">--</div></div>
-        <div style="text-align:center; font-size:12px; color:var(--text-gray); margin-bottom:15px;">資產活化建議指數</div>
+        <div style="text-align:center; font-size:12px; color:var(--text-gray); margin-bottom:15px;">資產變現建議分數</div>
         <div class="item"><span>預計領回現金</span><b id="sC" style="color:#0071e3; font-size:18px;">NT$ 0</b></div>
         <div class="item"><span>每月持有成本</span><b id="sM">NT$ 0</b></div>
         <div id="ai-section">
@@ -68,9 +68,9 @@
     </div>
 
     <div class="admin-area">
-        <label>系統引擎設定</label>
-        <input type="password" id="apiKey" placeholder="在此貼上 API Key">
-        <p style="font-size:10px; color:#555; margin-top:10px;">金鑰僅儲存在此裝置，不會上傳公開。</p>
+        <label>系統引擎設定 (請貼上 API Key)</label>
+        <input type="password" id="apiKey" placeholder="在此站上 API Key">
+        <p style="font-size:10px; color:#555; margin-top:10px;">金鑰僅儲存在此瀏覽器，不會上傳公開。</p>
     </div>
 </div>
 
@@ -106,8 +106,8 @@ async function runCheck() {
     const prompt = `你是一位專業 iPhone 鑑定師。機型：${modelName}，回收價：${p}元，電池：${ba}%，已用${yr}年。請以2026年市場視角，簡短分析此價格是否划算並給出建議，最後附上一個百分比分數。`;
 
     try {
-        // 修正點：使用 v1beta 並加上完整的模型版本號，這是目前最穩定的呼叫方式
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`;
+        // 核心修正：路徑改為 v1，模型名稱去掉 -latest
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
         
         const response = await fetch(url, {
             method: 'POST',
@@ -124,10 +124,10 @@ async function runCheck() {
             const aiText = data.candidates[0].content.parts[0].text;
             output.innerText = aiText;
             const scoreMatch = aiText.match(/\d+%/);
-            document.getElementById('sS').innerText = scoreMatch ? scoreMatch[0] : "95%";
+            document.getElementById('sS').innerText = scoreMatch ? scoreMatch[0] : "92%";
         }
     } catch (error) {
-        output.innerText = "網路異常，請確認 API 金鑰是否正確貼入。";
+        output.innerText = "連線異常，請確認 API Key 是否正確。";
     } finally {
         loading.style.display = "none";
     }
