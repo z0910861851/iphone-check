@@ -1,15 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>舊換新價值分析報告 (V32)</title>
+<title>舊換新回收建議</title>
 
 <style>
 :root {
     --apple-blue: #0071e3;
-    --bg-main: #ffffff;
-    --card-white: #f5f5f7;
+    --bg-main: #f5f5f7;
+    --card-white: #ffffff;
     --text-dark: #1d1d1f;
 }
 
@@ -29,7 +30,7 @@ body {
     background: var(--card-white);
     padding: 25px;
     border-radius: 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
     margin-bottom: 20px;
     border: 1px solid #e5e5e7;
 }
@@ -52,7 +53,7 @@ label {
 select, input {
     width: 100%;
     padding: 14px;
-    background: #ffffff;
+    background: #fafafa;
     border: 1px solid #d2d2d7;
     border-radius: 12px;
     font-size: 16px;
@@ -136,7 +137,6 @@ select:focus, input:focus {
     color: #3a3a3c;
     border-top: 1px solid #f2f2f2;
     padding-top: 20px;
-    text-align: justify;
 }
 
 .quote {
@@ -152,20 +152,17 @@ select:focus, input:focus {
 .admin-section {
     margin-top: 40px;
     padding: 15px;
-    border-top: 1px solid #eee;
+    border-top: 2px dashed #d2d2d7;
 }
 
-#apiKey { 
-    font-size: 12px; 
-    background: #fdfdfd; 
-}
+#apiKey { font-size: 10px; }
 </style>
 </head>
 
 <body>
 <div class="box">
 
-<h2>舊換新價值分析報告</h2>
+<h2>舊換新回收建議（內部使用）</h2>
 
 <div class="card">
 <label>鑑定舊機型號</label>
@@ -197,10 +194,10 @@ select:focus, input:focus {
 
 <label>外觀狀態</label>
 <select id="cond">
-<option>外觀完美 / 無摔無傷</option>
+<option>外觀完美</option>
 <option>輕微使用痕跡</option>
-<option>明顯傷痕 / 掉漆</option>
-<option>螢幕或背蓋損壞 (需維修)</option>
+<option>明顯傷痕</option>
+<option>螢幕或背蓋損壞</option>
 </select>
 
 <div style="display:flex; gap:12px;">
@@ -210,7 +207,7 @@ select:focus, input:focus {
 </div>
 <div style="flex:1">
 <label>舊機回收價 (NT$)</label>
-<input type="number" id="pr" placeholder="輸入報價">
+<input type="number" id="pr">
 </div>
 </div>
 
@@ -221,8 +218,8 @@ select:focus, input:focus {
 <table class="finance-table">
 <thead>
 <tr>
-<th style="text-align:left;padding-left:10px;">目標新機 (256G)</th>
-<th>原價</th>
+<th style="text-align:left;padding-left:10px;">目標新機</th>
+<th>參考價</th>
 <th>需補差價</th>
 <th>每月 / 每日</th>
 </tr>
@@ -238,9 +235,9 @@ select:focus, input:focus {
 <span class="quote">「使用，才真正賦予價值」</span>
 </div>
 
-<div class="admin-section" id="adminArea">
-<label>系統設定 (API KEY)</label>
-<input type="password" id="apiKey" oninput="saveKey()" placeholder="請貼上 gsk_ 開頭金鑰">
+<div class="admin-section">
+<label>系統設定（僅需設定一次）</label>
+<input type="password" id="apiKey" oninput="saveKey()" placeholder="gsk_ 開頭金鑰">
 </div>
 
 </div>
@@ -250,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedKey = localStorage.getItem('my_groq_key');
     if (savedKey) {
         document.getElementById('apiKey').value = savedKey;
+        document.querySelector('.admin-section').style.display = 'none';
     }
 });
 
@@ -257,11 +255,12 @@ function saveKey() {
     const key = document.getElementById('apiKey').value.trim();
     if (key.startsWith('gsk_')) {
         localStorage.setItem('my_groq_key', key);
+        document.querySelector('.admin-section').style.display = 'none';
     }
 }
 
 async function runCheck() {
-    const key = localStorage.getItem('my_groq_key') || document.getElementById('apiKey').value.trim();
+    const key = localStorage.getItem('my_groq_key');
     const tradeIn = parseFloat(document.getElementById('pr').value);
     const model = document.getElementById('m').value;
     const cond = document.getElementById('cond').value;
@@ -274,6 +273,7 @@ async function runCheck() {
 
     let batteryNote = "";
     if (battery < 80) batteryNote = "（電池已明顯老化）";
+    else if (battery < 85) batteryNote = "（電池續航開始下滑）";
 
     const models = [
         { name: "iPhone 17", price: 29900 },
@@ -288,38 +288,38 @@ async function runCheck() {
         const gap = m.price - tradeIn;
         const monthly = Math.round(gap / 12);
         const daily = Math.round(gap / 365);
+
         tbody.innerHTML += `
         <tr>
             <td class="model-name">${m.name}</td>
             <td>$${m.price.toLocaleString()}</td>
             <td class="price-tag">$${gap.toLocaleString()}</td>
-            <td>$${monthly.toLocaleString()} / <span class="daily-blue">$${daily}</span></td>
+            <td>$${monthly} / <span class="daily-blue">$${daily}</span></td>
         </tr>`;
     });
 
     document.getElementById('res').style.display = "block";
-    document.getElementById('ai-output').innerText = "專業資產顧問分析中…";
+    document.getElementById('ai-output').innerText = "分析中…";
 
-    // 核心邏輯補修：加入回收價合理性判斷
     const prompt = `
 你是專業資產顧問。客戶持有 ${model}，外觀狀況為 ${cond}，
-電池健康度 ${battery}%${batteryNote}，目前回收價僅為 ${tradeIn} 元。
+電池健康度 ${battery}%${batteryNote}，目前回收價為 ${tradeIn} 元。
 
-【特別判斷】：
-如果回收價 ${tradeIn} 遠低於該型號的市場行情（例如 iPhone 16 系列卻低於 1.5 萬，或 iPhone 15 低於 1 萬等），
-請「不要」建議回收，請委婉告知目前的回收殘值不符合這台手機應有的資產價值。
-建議客戶保留自用或贈與家人，因為「使用才賦予價值」，現在賣掉對他而言是巨大的損失。
+請運用以下觀念說明：
+1. 閒置即虧損：未使用的舊手機只會隨時間貶值。
+2. 價值活化：回收是將舊資產轉化為新設備的資金。
+3. 費用感官：用每日成本理解升級壓力。
+4. 備用機迷思：久放易壞，並非真正保值。
+5. 給家人的迷思：效能與電池不佳的舊機，往往是負擔。
 
-如果回收價在合理範圍，請運用以下觀念：
-1. 閒置即虧損：米酒瓶概念，空瓶佔空間。
-2. 價值活化：現在回收是「止血」。
-3. 費用感官：升級 iPhone 17 Pro 每日分攤僅需 $${Math.round((39900 - tradeIn) / 365)}。
-4. 備用機迷思：久放必壞，現在處分最聰明。
-5. 給家人的迷思：引用 Adam 觀點，給家人舊機不是愛。
+請用 180 字內、專業誠懇的繁體中文回答，強調「使用才賦予價值」。
+結尾請不要替顧客決定購買哪一款，而是用適合族群的方式說明：
 
-請用 180 字內回答，語氣專業誠懇。
-結尾根據合適族群說明：iPhone 17(止血族)、17 Pro(效能與平衡)、17 Pro Max(預算寬裕)。
-最後加一句中性引導語讓顧客自行對照。
+- iPhone 17：適合希望以最低成本完成換機、重視止血效果的人。
+- iPhone 17 Pro：適合在意效能、使用年限與價格平衡的人。
+- iPhone 17 Pro Max：適合預算較寬鬆、注重拍攝、想拉長換機週期的人。
+
+最後請加一句中性引導語，讓顧客自行對照哪一種描述最符合自己。
 `;
 
     try {
@@ -336,7 +336,8 @@ async function runCheck() {
         });
 
         const data = await response.json();
-        document.getElementById('ai-output').innerText = data.choices[0].message.content;
+        document.getElementById('ai-output').innerText =
+            data.choices[0].message.content;
     } catch {
         document.getElementById('ai-output').innerText = "系統連線異常";
     }
@@ -345,3 +346,4 @@ async function runCheck() {
 
 </body>
 </html>
+
