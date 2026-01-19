@@ -3,295 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>舊換新回收建議（內部版）</title>
+<title>舊換新回收建議</title>
 
 <style>
 :root{
-    --apple-blue:#0071e3;
-    --bg:#f5f5f7;
-    --card:#ffffff;
-    --text:#1d1d1f;
+--apple-blue:#0071e3;
+--bg:#f5f5f7;
+--card:#fff;
+--text:#1d1d1f;
 }
 
 body{
-    margin:0;
-    padding:20px;
-    background:var(--bg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    display:flex;
-    justify-content:center;
+margin:0;
+padding:20px;
+background:var(--bg);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+display:flex;
+justify-content:center;
+color:var(--text);
 }
 
 .box{width:100%;max-width:440px;}
 
 .card{
-    background:var(--card);
-    border-radius:22px;
-    padding:22px;
-    box-shadow:0 6px 24px rgba(0,0,0,.06);
-    border:1px solid #e5e5e7;
-    margin-bottom:18px;
+background:var(--card);
+border-radius:24px;
+padding:25px;
+box-shadow:0 8px 30px rgba(0,0,0,.05);
+border:1px solid #e5e5e7;
+margin-bottom:20px;
 }
 
-h2{
-    text-align:center;
-    font-weight:600;
-    margin-bottom:20px;
-}
+h2{text-align:center;margin-bottom:25px;}
 
 label{
-    font-size:13px;
-    color:#86868b;
-    margin-bottom:6px;
-    display:block;
+display:block;
+font-size:13px;
+color:#86868b;
+margin-bottom:6px;
 }
 
 select,input{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    border:1px solid #d2d2d7;
-    font-size:15px;
-    box-sizing:border-box;
-    margin-bottom:14px;
-}
-
-select:focus,input:focus{
-    outline:none;
-    border-color:var(--apple-blue);
-}
-
-.flex{
-    display:flex;
-    gap:12px;
+width:100%;
+padding:14px;
+border-radius:12px;
+border:1px solid #d2d2d7;
+margin-bottom:18px;
+font-size:16px;
+background:#fafafa;
 }
 
 button{
-    width:100%;
-    padding:16px;
-    border:none;
-    border-radius:14px;
-    background:var(--apple-blue);
-    color:#fff;
-    font-size:17px;
-    font-weight:600;
-    cursor:pointer;
+width:100%;
+padding:18px;
+border:none;
+border-radius:16px;
+background:var(--apple-blue);
+color:#fff;
+font-size:18px;
+font-weight:600;
+cursor:pointer;
 }
 
-#result{display:none;}
+#res{display:none;}
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:12px;
-    margin-bottom:14px;
+.analysis{
+display:grid;
+gap:14px;
+margin-top:20px;
 }
 
-th{
-    background:#fafafa;
-    padding:10px 4px;
-    color:#86868b;
-    font-weight:500;
+.analysis-card{
+background:#fafafa;
+border:1px solid #e5e5e7;
+border-radius:18px;
+padding:16px 18px;
 }
 
-td{
-    padding:12px 4px;
-    border-bottom:1px solid #f0f0f0;
-    text-align:center;
+.analysis-card h3{
+margin:0 0 8px;
+font-size:15px;
 }
 
-.model{
-    text-align:left;
-    font-weight:600;
-    padding-left:8px;
+.analysis-card ul{
+margin:0;
+padding-left:18px;
+font-size:13px;
+line-height:1.7;
+color:#3a3a3c;
 }
 
-.price-gap{color:#d70015;font-weight:600;}
-.daily{color:var(--apple-blue);font-weight:700;}
-
-.advice-block{
-    background:#fafafa;
-    border:1px solid #e5e5e7;
-    border-radius:14px;
-    padding:14px 16px;
-    margin-bottom:10px;
+.finance-table{
+width:100%;
+border-collapse:collapse;
+font-size:12px;
+margin-top:20px;
 }
 
-.advice-title{
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:6px;
+.finance-table th{
+background:#fbfbfd;
+padding:10px;
+color:#86868b;
+border-bottom:1px solid #eee;
 }
 
-.advice-text{
-    font-size:14px;
-    line-height:1.6;
-    color:#3a3a3c;
+.finance-table td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid #f2f2f2;
 }
 
-.footer{
-    text-align:center;
-    font-size:12px;
-    color:#86868b;
-    margin-top:10px;
-}
+.model-name{text-align:left;font-weight:600;}
+.price-tag{color:#d70015;font-weight:600;}
+.daily-blue{color:#0071e3;font-weight:700;}
 </style>
 </head>
 
 <body>
 <div class="box">
 
-<h2>舊換新回收建議（內部）</h2>
+<h2>舊換新回收建議</h2>
 
 <div class="card">
-<label>鑑定舊機型號</label>
-<select id="model" onchange="generateAdvice()">
+<label>舊機型號</label>
+<select id="model">
 <option>iPhone 16 Pro Max</option>
 <option>iPhone 16 Pro</option>
 <option>iPhone 16 Plus</option>
 <option>iPhone 16</option>
+
 <option>iPhone 15 Pro Max</option>
 <option>iPhone 15 Pro</option>
 <option>iPhone 15 Plus</option>
 <option>iPhone 15</option>
+
 <option>iPhone 14 Pro Max</option>
 <option>iPhone 14 Pro</option>
+<option>iPhone 14 Plus</option>
 <option>iPhone 14</option>
+
+<option>iPhone 13 Pro Max</option>
 <option>iPhone 13 Pro</option>
 <option>iPhone 13</option>
+<option>iPhone 13 mini</option>
+
+<option>iPhone 12 Pro Max</option>
+<option>iPhone 12 Pro</option>
 <option>iPhone 12</option>
+<option>iPhone 12 mini</option>
+
+<option>iPhone 11 Pro Max</option>
+<option>iPhone 11 Pro</option>
 <option>iPhone 11</option>
 </select>
 
-<label>外觀狀態</label>
-<select>
-<option>外觀完美</option>
-<option>輕微使用痕跡</option>
-<option>明顯傷痕</option>
-<option>螢幕或背蓋損壞</option>
-</select>
+<label>電池健康度 (%)</label>
+<input type="number" id="battery" value="85">
 
-<div class="flex">
-<div>
-<label>電池健康度 %</label>
-<input type="number" id="battery" value="90" oninput="generateAdvice()">
-</div>
-<div>
-<label>舊機回收價 NT$</label>
-<input type="number" id="trade" oninput="generateAdvice()">
-</div>
+<label>舊機回收價 (NT$)</label>
+<input type="number" id="tradein">
+
+<button onclick="analyze()">開始分析</button>
 </div>
 
-<button onclick="calculate()">開始分析</button>
+<div id="res" class="card">
+
+<div class="analysis">
+
+<div class="analysis-card">
+<h3>🔋 電池狀態</h3>
+<ul id="batteryText"></ul>
 </div>
 
-<div class="card" id="result">
+<div class="analysis-card">
+<h3>📆 使用世代評估</h3>
+<ul id="generationText"></ul>
+</div>
 
-<table>
+<div class="analysis-card">
+<h3>💰 回收價值判斷</h3>
+<ul id="priceText"></ul>
+</div>
+
+</div>
+
+<table class="finance-table">
 <thead>
 <tr>
-<th style="text-align:left;padding-left:8px;">目標新機</th>
-<th>參考價</th>
-<th>需補差價</th>
-<th>每日</th>
+<th style="text-align:left">新機型號</th>
+<th>售價</th>
+<th>補差額</th>
+<th>每日換機</th>
 </tr>
 </thead>
-<tbody id="tableBody"></tbody>
+<tbody id="financeBody"></tbody>
 </table>
 
-<div class="advice-block">
-<div class="advice-title">🔋 電池狀況評估</div>
-<div id="advice-battery" class="advice-text"></div>
-</div>
-
-<div class="advice-block">
-<div class="advice-title">📱 舊機世代定位</div>
-<div id="advice-series" class="advice-text"></div>
-</div>
-
-<div class="advice-block">
-<div class="advice-title">♻️ 回收價角色說明</div>
-<div id="advice-trade" class="advice-text"></div>
-</div>
-
-<div class="footer">使用，才真正賦予價值</div>
 </div>
 
 </div>
 
 <script>
-function calculate(){
-    const trade = parseInt(document.getElementById("trade").value);
-    if(!trade) return alert("請輸入回收價");
+function analyze(){
+const model=document.getElementById("model").value;
+const battery=parseInt(document.getElementById("battery").value);
+const tradein=parseInt(document.getElementById("tradein").value);
+if(!tradein){alert("請輸入回收價");return;}
 
-    const models=[
-        {n:"iPhone 17",p:29900},
-        {n:"iPhone 17 Pro",p:39900},
-        {n:"iPhone 17 Pro Max",p:44900}
-    ];
+document.getElementById("res").style.display="block";
 
-    let html="";
-    models.forEach(m=>{
-        const gap=m.p-trade;
-        html+=`
-        <tr>
-            <td class="model">${m.n}</td>
-            <td>$${m.p.toLocaleString()}</td>
-            <td class="price-gap">$${gap.toLocaleString()}</td>
-            <td class="daily">$${Math.round(gap/365)}</td>
-        </tr>`;
-    });
-
-    document.getElementById("tableBody").innerHTML=html;
-    document.getElementById("result").style.display="block";
-    generateAdvice();
+/* 電池 */
+const b=document.getElementById("batteryText");
+b.innerHTML="";
+if(battery>=90){
+b.innerHTML+=`<li>電池狀況仍佳，日常使用穩定</li>`;
+b.innerHTML+=`<li>換機主要著眼於整體體驗升級</li>`;
+}else if(battery>=80){
+b.innerHTML+=`<li>電池已有自然耗損</li>`;
+b.innerHTML+=`<li>續航表現在高使用情境下略受影響</li>`;
+}else{
+b.innerHTML+=`<li>電池衰退明顯</li>`;
+b.innerHTML+=`<li>續航已成為影響體驗的關鍵因素</li>`;
 }
 
-function generateAdvice(){
-    const model=document.getElementById("model").value;
-    const battery=parseInt(document.getElementById("battery").value);
-    const trade=parseInt(document.getElementById("trade").value);
-    if(!battery||!trade) return;
+/* 世代 */
+const g=document.getElementById("generationText");
+g.innerHTML="";
+if(model.includes("16") || model.includes("15")){
+g.innerHTML+=`<li>屬於近代機型</li>`;
+g.innerHTML+=`<li>升級著重在功能完整度與未來支援年限</li>`;
+}else if(model.includes("14") || model.includes("13")){
+g.innerHTML+=`<li>已進入世代交替區間</li>`;
+g.innerHTML+=`<li>升級可明顯改善效能與拍攝體驗</li>`;
+}else{
+g.innerHTML+=`<li>與現行世代差距明顯</li>`;
+g.innerHTML+=`<li>新機在流暢度與穩定性提升顯著</li>`;
+}
 
-    // Battery
-    let b="";
-    if(battery>=90) b="電池健康度良好，日常使用與續航表現穩定。";
-    else if(battery>=80) b="續航開始下滑，長時間使用可能需留意。";
-    else b="電池老化明顯，後續維修或更換成本需考量。";
-    document.getElementById("advice-battery").innerText=b;
+/* 價值 */
+const p=document.getElementById("priceText");
+p.innerHTML="";
+if(tradein>=20000){
+p.innerHTML+=`<li>回收價仍具相當轉換價值</li>`;
+p.innerHTML+=`<li>適合直接轉為新機使用效益</li>`;
+}else if(tradein>=12000){
+p.innerHTML+=`<li>回收價落在主流區間</li>`;
+p.innerHTML+=`<li>升級可著重在實際使用改善幅度</li>`;
+}else{
+p.innerHTML+=`<li>回收價已接近殘值區</li>`;
+p.innerHTML+=`<li>換機能明確改善整體體驗</li>`;
+}
 
-    // Series
-    let s="";
-    if(model.includes("16")||model.includes("15"))
-        s="屬於較新世代，效能與系統支援仍在穩定區間。";
-    else if(model.includes("14")||model.includes("13"))
-        s="使用年限進入中後段，體驗將逐年受影響。";
-    else
-        s="已屬較早世代，後續支援與硬體風險需留意。";
-    document.getElementById("advice-series").innerText=s;
+/* 新機 */
+const models=[
+{name:"iPhone 17",price:29900},
+{name:"iPhone 17 Pro",price:39900},
+{name:"iPhone 17 Pro Max",price:44900}
+];
 
-    // Trade
-    document.getElementById("advice-trade").innerText=
-        "回收金額可作為新設備的一部分資金，是否使用取決於個人使用規劃，而非單純價格高低。";
-     const prompt = `
-你是專業資產顧問。客戶持有 ${model}，外觀狀況為 ${cond}，
-電池健康度 ${battery}%${batteryNote}，目前回收價為 ${tradeIn} 元。
-
-請運用以下觀念說明：
-1. 閒置即虧損：未使用的舊手機只會隨時間貶值。
-2. 價值活化：回收是將舊資產轉化為新設備的資金。
-3. 費用感官：用每日成本理解升級壓力。
-4. 備用機迷思：久放易壞，並非真正保值。
-5. 給家人的迷思：效能與電池不佳的舊機，往往是負擔。
-
-請用 180 字內、專業誠懇的繁體中文回答，強調「使用才賦予價值」。
-結尾請不要替顧客決定購買哪一款，而是用適合族群的方式說明：
-
-- iPhone 17：適合希望以最低成本完成換機、重視止血效果的人。
-- iPhone 17 Pro：適合在意效能、使用年限與價格平衡的人。
-- iPhone 17 Pro Max：適合預算較寬鬆、注重拍攝、想拉長換機週期的人。
-
-最後請加一句中性引導語，讓顧客自行對照哪一種描述最符合自己。
+const tbody=document.getElementById("financeBody");
+tbody.innerHTML="";
+models.forEach(m=>{
+const gap=m.price-tradein;
+tbody.innerHTML+=`
+<tr>
+<td class="model-name">${m.name}</td>
+<td>$${m.price.toLocaleString()}</td>
+<td class="price-tag">$${gap.toLocaleString()}</td>
+<td class="daily-blue">$${Math.round(gap/365)}</td>
+</tr>`;
+});
 }
 </script>
 
