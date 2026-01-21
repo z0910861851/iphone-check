@@ -2,8 +2,16 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iPhone 舊換新 AI 智能分析</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0071e3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="換機分析">
+<meta name="description" content="iPhone 舊換新 AI 智能分析系統 - 精準評估換機時機">
+<title>iPhone 舊換新 AI 分析</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogImlQaG9uZSDivaXmj5vmlrAgQUkg5YiG5p6QIiwKICAic2hvcnRfbmFtZSI6ICLmj5vmnLDliIbmnpAiLAogICJkZXNjcmlwdGlvbiI6ICJBSeaZuuiDveWIhumHj+Wunue+qeaIqOaPm+apn+aZguapnyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y1ZjVmNyIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDcxZTMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNVGt5SWlCb1pXbG5hSFE5SWpFNU1pSWdkbWxsZDBKdmVEMGlNQ0F3SURFNU1pQXhPVElpSUdacGJHdzlJbTV2Ym1VaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BISmxZM1FnZUQwaU1DSWdlVDBpTUNJZ2QybGtkR2c5SWpFNU1pSWdhR1ZwWjJoMFBTSXhPVElpSUhKNFBTSTBPQ0lnWm1sc2JEMGlJekF3TnpGbE15SXZQangwWlhoMElIZzlJalEwSWlCNVBTSTROQ0lnWm05dWRDMW1ZVzFwYkhrOUluTmhibk10YzJWeWFXWWlJR1pwYkd3OUlpTm1abVlpSUdadmJuUXRjMmw2WlQwaU16SWlJSFJsZUhRdFlXNWphRzl5UFNJN0lHUDBJ" CwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2RtbGxkMEp2ZUQwaU1DQXdJRFV4TWlBMU1USWlJR1pwYkd3OUltNXZibVVpSUhodGJHNXpQU0pvZEhSd09pOHZkM2QzTG5jekxtOXlaeTh5TURBd0wzTjJaeUkrUEhKbFkzUWdlRDBpTUNJZ2VUMGlNQ0lnZDJsa2RHZzlJalV4TWlJZ2FHVnBaMmgwUFNJMU1USWlJSEo0UFNJeE1qZ2lJR1pwYkd3OUlpTXdNRGN4WlRNaUx6NDhkR1Y0ZENCNFBTSTBOQ0lnZVQwaU9EUWlJR1p2Ym5RdFptRnRhV3g1UFNKellXNXpMWE5sY21sbUlpQm1hV3hzUFNJalptWm1JaUJtYjI1MExYTnBlbVU5SWpNeUlpQjBaWGgwTFdGdVkyaHZjajBpYlNJK/CfmoztPL", CiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ==">
 
 <style>
 :root{
@@ -16,26 +24,68 @@
 --text:#1d1d1f;
 }
 
-*{box-sizing:border-box;}
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
 
 body{
 margin:0;
-padding:20px;
+padding:0;
 background:var(--bg);
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-display:flex;
-justify-content:center;
 color:var(--text);
 line-height:1.5;
+overflow-x:hidden;
 }
 
-.container{width:100%;max-width:680px;}
+.app-container{
+max-width:680px;
+margin:0 auto;
+padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+padding-top:max(env(safe-area-inset-top), 20px);
+min-height:100vh;
+}
+
+.install-prompt{
+position:fixed;
+bottom:20px;
+left:20px;
+right:20px;
+background:var(--apple-blue);
+color:#fff;
+padding:16px;
+border-radius:16px;
+box-shadow:0 8px 30px rgba(0,113,227,.4);
+display:none;
+align-items:center;
+justify-content:space-between;
+z-index:1000;
+animation:slideUp 0.3s ease;
+}
+
+@keyframes slideUp{
+from{transform:translateY(100px);opacity:0;}
+to{transform:translateY(0);opacity:1;}
+}
+
+.install-prompt.show{display:flex;}
+
+.install-prompt button{
+background:#fff;
+color:var(--apple-blue);
+border:none;
+padding:8px 16px;
+border-radius:8px;
+font-weight:600;
+cursor:pointer;
+}
 
 .card{
 background:var(--card);
 border-radius:24px;
-padding:28px;
-box-shadow:0 8px 30px rgba(0,0,0,.06);
+padding:24px;
+box-shadow:0 4px 20px rgba(0,0,0,.06);
 border:1px solid #e5e5e7;
 margin-bottom:20px;
 }
@@ -43,42 +93,42 @@ margin-bottom:20px;
 h1{
 text-align:center;
 margin:0 0 8px;
-font-size:32px;
+font-size:28px;
 font-weight:700;
 }
 
 .subtitle{
 text-align:center;
 color:#86868b;
-font-size:15px;
-margin-bottom:30px;
+font-size:14px;
+margin-bottom:24px;
 }
 
 .ai-badge{
 display:inline-block;
 background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
 color:#fff;
-padding:4px 12px;
-border-radius:12px;
-font-size:12px;
+padding:3px 10px;
+border-radius:10px;
+font-size:11px;
 font-weight:600;
-margin-left:8px;
+margin-left:6px;
 }
 
 label{
 display:block;
-font-size:14px;
+font-size:13px;
 font-weight:500;
 color:#1d1d1f;
-margin-bottom:8px;
+margin-bottom:6px;
 }
 
 select,input,textarea{
 width:100%;
-padding:14px 16px;
+padding:12px 14px;
 border-radius:12px;
 border:1px solid #d2d2d7;
-margin-bottom:18px;
+margin-bottom:14px;
 font-size:16px;
 background:#fafafa;
 transition:all .2s;
@@ -86,7 +136,7 @@ font-family:inherit;
 }
 
 textarea{
-min-height:80px;
+min-height:70px;
 resize:vertical;
 }
 
@@ -100,31 +150,25 @@ box-shadow:0 0 0 4px rgba(0,113,227,.1);
 .flex-row{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:16px;
+gap:12px;
 }
 
 button{
 width:100%;
-padding:18px;
+padding:16px;
 border:none;
-border-radius:16px;
+border-radius:14px;
 background:var(--apple-blue);
 color:#fff;
-font-size:18px;
+font-size:17px;
 font-weight:600;
 cursor:pointer;
 transition:all .3s;
-margin-top:10px;
+margin-top:8px;
 }
 
-button:hover:not(:disabled){
-background:#0077ed;
-transform:translateY(-1px);
-box-shadow:0 8px 20px rgba(0,113,227,.3);
-}
-
-button:active:not(:disabled){
-transform:translateY(0);
+button:active{
+transform:scale(0.98);
 }
 
 button:disabled{
@@ -134,13 +178,13 @@ cursor:not-allowed;
 
 .loading-spinner{
 display:inline-block;
-width:20px;
-height:20px;
+width:18px;
+height:18px;
 border:3px solid rgba(255,255,255,.3);
 border-top-color:#fff;
 border-radius:50%;
 animation:spin 1s linear infinite;
-margin-right:10px;
+margin-right:8px;
 }
 
 @keyframes spin{
@@ -151,32 +195,32 @@ to{transform:rotate(360deg);}
 
 .score-display{
 text-align:center;
-padding:30px;
+padding:24px;
 background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-border-radius:20px;
-margin-bottom:25px;
+border-radius:18px;
+margin-bottom:20px;
 color:#fff;
 }
 
 .score-number{
-font-size:64px;
+font-size:56px;
 font-weight:800;
 margin:0;
 }
 
 .score-label{
-font-size:16px;
+font-size:14px;
 opacity:.9;
-margin-top:5px;
+margin-top:4px;
 }
 
 .recommendation-badge{
 display:inline-block;
-padding:8px 18px;
-border-radius:20px;
-font-size:14px;
+padding:6px 16px;
+border-radius:18px;
+font-size:13px;
 font-weight:600;
-margin-top:15px;
+margin-top:12px;
 }
 
 .badge-high{background:rgba(255,59,48,.2);color:#ff3b30;}
@@ -185,29 +229,24 @@ margin-top:15px;
 
 .analysis{
 display:grid;
-gap:16px;
-margin:25px 0;
+gap:14px;
+margin:20px 0;
 }
 
 .analysis-card{
 background:#fafafa;
 border:1px solid #e5e5e7;
-border-radius:18px;
-padding:20px;
+border-radius:16px;
+padding:18px;
 transition:all .3s;
 }
 
-.analysis-card:hover{
-transform:translateY(-2px);
-box-shadow:0 4px 12px rgba(0,0,0,.08);
-}
-
 .analysis-card h3{
-margin:0 0 12px;
-font-size:17px;
+margin:0 0 10px;
+font-size:16px;
 display:flex;
 align-items:center;
-gap:8px;
+gap:6px;
 }
 
 .ai-analysis{
@@ -220,24 +259,24 @@ color:#667eea;
 }
 
 .analysis-content{
-font-size:14px;
-line-height:1.8;
+font-size:13px;
+line-height:1.7;
 color:#3a3a3c;
 white-space:pre-wrap;
 }
 
 .progress-bar{
 width:100%;
-height:8px;
+height:6px;
 background:#e5e5e7;
-border-radius:10px;
+border-radius:8px;
 overflow:hidden;
-margin:12px 0;
+margin:10px 0;
 }
 
 .progress-fill{
 height:100%;
-border-radius:10px;
+border-radius:8px;
 transition:width .6s ease;
 }
 
@@ -245,22 +284,22 @@ transition:width .6s ease;
 width:100%;
 border-collapse:separate;
 border-spacing:0;
-font-size:13px;
-margin-top:20px;
+font-size:12px;
+margin-top:16px;
 overflow:hidden;
 border-radius:12px;
 }
 
 .finance-table th{
 background:#fbfbfd;
-padding:14px 12px;
+padding:12px 10px;
 color:#86868b;
 font-weight:600;
 border-bottom:2px solid #e5e5e7;
 }
 
 .finance-table td{
-padding:16px 12px;
+padding:14px 10px;
 text-align:center;
 border-bottom:1px solid #f2f2f2;
 background:#fff;
@@ -277,59 +316,65 @@ color:#1d1d1f;
 }
 
 .price-tag{color:#d70015;font-weight:700;}
-.daily-blue{color:#0071e3;font-weight:700;font-size:15px;}
+.daily-blue{color:#0071e3;font-weight:700;font-size:14px;}
 
 .quote{
-margin-top:20px;
+margin-top:16px;
 text-align:center;
-font-size:14px;
+font-size:13px;
 color:#86868b;
 font-style:italic;
-padding:20px;
+padding:16px;
 background:#fafafa;
 border-radius:12px;
-line-height:1.8;
+line-height:1.6;
 }
 
 .stat-grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-bottom:20px;
+gap:10px;
+margin-bottom:16px;
 }
 
 .stat-box{
 background:#fff;
-padding:16px;
+padding:14px;
 border-radius:12px;
 text-align:center;
 border:1px solid #e5e5e7;
 }
 
 .stat-value{
-font-size:24px;
+font-size:22px;
 font-weight:700;
 color:var(--apple-blue);
 }
 
 .stat-label{
-font-size:12px;
+font-size:11px;
 color:#86868b;
-margin-top:4px;
+margin-top:3px;
 }
 
 @media (max-width:600px){
 .flex-row{grid-template-columns:1fr;}
 .stat-grid{grid-template-columns:1fr;}
+h1{font-size:24px;}
 }
 </style>
 </head>
 
 <body>
-<div class="container">
+<div class="app-container">
 
-<h1>🤖 AI 舊換新智能分析<span class="ai-badge">AI Powered</span></h1>
-<div class="subtitle">由 Claude AI 提供個性化換機建議</div>
+<h1>🤖 AI 舊換新分析<span class="ai-badge">PWA</span></h1>
+<div class="subtitle">可安裝到手機桌面使用</div>
+
+<div class="install-prompt" id="installPrompt">
+<span>📲 安裝此 App 到桌面</span>
+<button onclick="installApp()">安裝</button>
+</div>
 
 <div class="card">
 <label>📱 舊機型號</label>
@@ -378,10 +423,10 @@ margin-top:4px;
 </div>
 </div>
 
-<label>💭 特殊需求或考量（選填）</label>
-<textarea id="userNote" placeholder="例如：預算有限、想要拍照功能更好、遊戲需求、電池續航很重要..."></textarea>
+<label>💭 特殊需求（選填）</label>
+<textarea id="userNote" placeholder="例如：預算有限、想要拍照功能更好..."></textarea>
 
-<button id="analyzeBtn" onclick="analyze()">🚀 開始 AI 智能分析</button>
+<button id="analyzeBtn" onclick="analyze()">🚀 開始 AI 分析</button>
 </div>
 
 <div id="res" class="card">
@@ -434,7 +479,7 @@ margin-top:4px;
 
 </div>
 
-<h3 style="margin-top:30px;margin-bottom:15px;">💳 新機換購方案試算</h3>
+<h3 style="margin-top:24px;margin-bottom:12px;font-size:16px;">💳 新機換購方案試算</h3>
 <table class="finance-table">
 <thead>
 <tr>
@@ -453,7 +498,7 @@ margin-top:4px;
 • iPhone 13-15：最值一換，回收價仍有 2/3 以上價值<br>
 • iPhone 11-12：用得夠久但價值還有，升級體驗提升明顯<br>
 <br>
-「使用，才真正賦予價值」— 把握最佳時機，讓舊機發揮最後價值
+「使用，才真正賦予價值」
 </div>
 
 </div>
@@ -461,6 +506,49 @@ margin-top:4px;
 </div>
 
 <script>
+// PWA 安裝提示
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+e.preventDefault();
+deferredPrompt = e;
+document.getElementById('installPrompt').classList.add('show');
+});
+
+function installApp() {
+if (deferredPrompt) {
+deferredPrompt.prompt();
+deferredPrompt.userChoice.then((choiceResult) => {
+if (choiceResult.outcome === 'accepted') {
+document.getElementById('installPrompt').classList.remove('show');
+}
+deferredPrompt = null;
+});
+}
+}
+
+// Service Worker 註冊
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+const swCode = `
+self.addEventListener('install', (e) => {
+self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
+self.clients.claim();
+});
+
+self.addEventListener('fetch', (e) => {
+e.respondWith(fetch(e.request));
+});
+`;
+const blob = new Blob([swCode], { type: 'application/javascript' });
+const swUrl = URL.createObjectURL(blob);
+navigator.serviceWorker.register(swUrl);
+});
+}
+
 function getModelAge(model){
 if(model.includes("16")) return 1;
 if(model.includes("15")) return 2;
@@ -482,11 +570,10 @@ return conditions[val] || "未知";
 }
 
 async function getAIRecommendation(data){
-// 異常低價直接返回警告
 if(data.isAbnormallyLow){
 return `⚠️ 回收價異常警示
 
-您的 ${data.model} 回收價 NT${data.tradein.toLocaleString()} 明顯低於市場行情，與同機齡同機型的一般價格相比極不合理。
+您的 ${data.model} 回收價 NT$${data.tradein.toLocaleString()} 明顯低於市場行情，與同機齡同機型的一般價格相比極不合理。
 
 這個異常價格可能代表：
 1. 設備有嚴重損壞（螢幕破裂、機身變形、泡水等）
@@ -501,21 +588,20 @@ return `⚠️ 回收價異常警示
 在如此低的回收價下，回收等於白白損失大量價值，強烈不建議立即回收。${data.userNote ? `\n\n關於您提到的「${data.userNote}」需求，建議先解決回收價過低的問題。` : ''}`;
 }
 
-// 正常情況：簡化的備用建議
 const gap = 44900 - data.tradein;
 const daily = Math.round(gap / 365);
 
 let advice = '';
 if(data.age >= 5){
-advice = `您的 ${data.model} 已使用 ${data.age} 年，屬於該回收的時機。回收價 NT${data.tradein.toLocaleString()} 可能是最後能折抵的價值。升級到 iPhone 17 Pro Max 補差額 NT${gap.toLocaleString()}，每天約 NT${daily}。`;
+advice = `您的 ${data.model} 已使用 ${data.age} 年，屬於該回收的時機。回收價 NT$${data.tradein.toLocaleString()} 可能是最後能折抵的價值。升級到 iPhone 17 Pro Max 補差額 NT$${gap.toLocaleString()}，每天約 NT$${daily}。`;
 }else if(data.age >= 4){
-advice = `您的 ${data.model} 是公認的「最值一換」機型。回收價 NT${data.tradein.toLocaleString()} 還算不錯。升級到 iPhone 17 Pro Max 補差額 NT${gap.toLocaleString()}，每天約 NT${daily}，就能體驗全面升級。`;
+advice = `您的 ${data.model} 是公認的「最值一換」機型。回收價 NT$${data.tradein.toLocaleString()} 還算不錯。升級到 iPhone 17 Pro Max 補差額 NT$${gap.toLocaleString()}，每天約 NT$${daily}，就能體驗全面升級。`;
 }else if(data.age >= 3){
-advice = `您的 ${data.model} 已進入世代交替期，回收價 NT${data.tradein.toLocaleString()}。繼續持有價值會持續下降。升級到 iPhone 17 Pro Max 補差額 NT${gap.toLocaleString()}，每天約 NT${daily}。`;
+advice = `您的 ${data.model} 已進入世代交替期，回收價 NT$${data.tradein.toLocaleString()}。繼續持有價值會持續下降。升級到 iPhone 17 Pro Max 補差額 NT$${gap.toLocaleString()}，每天約 NT$${daily}。`;
 }else if(data.age >= 2){
-advice = `您的 ${data.model} 已是兩代前機型，回收價 NT${data.tradein.toLocaleString()} 處於合理窗口。升級到 iPhone 17 Pro Max 補差額 NT${gap.toLocaleString()}，每天約 NT${daily}。`;
+advice = `您的 ${data.model} 已是兩代前機型，回收價 NT$${data.tradein.toLocaleString()} 處於合理窗口。升級到 iPhone 17 Pro Max 補差額 NT$${gap.toLocaleString()}，每天約 NT$${daily}。`;
 }else{
-advice = `您的 ${data.model} 機齡較新，回收價 NT${data.tradein.toLocaleString()}。如果想體驗最新功能，升級到 iPhone 17 Pro Max 補差額 NT${gap.toLocaleString()}，每天約 NT${daily}。`;
+advice = `您的 ${data.model} 機齡較新，回收價 NT$${data.tradein.toLocaleString()}。如果想體驗最新功能，升級到 iPhone 17 Pro Max 補差額 NT$${gap.toLocaleString()}，每天約 NT$${daily}。`;
 }
 
 if(data.userNote){
@@ -544,19 +630,45 @@ btn.innerHTML = '<span class="loading-spinner"></span>AI 分析中...';
 document.getElementById("res").style.display = "block";
 document.getElementById("res").scrollIntoView({behavior:"smooth", block:"start"});
 
-// 取得機齡
 const age = getModelAge(model);
-
-// 判斷是否為異常低價
 const isAbnormallyLow = (age <= 2 && tradein < 10000) || (age <= 1 && tradein < 15000);
 
-// 計算分數
 let batteryScore = 0;
 if(battery<75) batteryScore=100;
 else if(battery<80) batteryScore=80;
 else if(battery<85) batteryScore=60;
 else if(battery<90) batteryScore=40;
 else batteryScore=20;
+
+let condScore = 0;
+if(conditionVal==1) condScore=100;
+else if(conditionVal==2) condScore=70;
+else if(conditionVal==3) condScore=45;
+else condScore=30;
+
+let totalScore = 0;
+
+if(age <= 2 && tradein >= 20000){
+totalScore = 85;
+}
+else if(age <= 2 && tradein >= 10000){
+totalScore = 60;
+}
+else if(age >= 3 && age <= 4 && tradein >= 12000){
+totalScore = 75;
+}
+else if(age >= 3 && age <= 4){
+totalScore = 65;
+}
+else if(age >= 5){
+totalScore = 90;
+}
+else{
+totalScore = 45;
+}
+
+const adjustment = Math.round((batteryScore - 60) * 0.1 + (condScore - 30) * 0.1);
+totalScore = Math.min(100, Math.max(20, totalScore + adjustment));
 
 let ageScore = 0;
 if(age>=6) ageScore=100;
@@ -566,28 +678,14 @@ else if(age>=3) ageScore=60;
 else if(age>=2) ageScore=45;
 else ageScore=25;
 
-let condScore = 0;
-if(conditionVal==1) condScore=100;
-else if(conditionVal==2) condScore=70;
-else if(conditionVal==3) condScore=45;
-else condScore=30;
-
 let valueScore = 0;
-if(tradein<7000) valueScore=100;
-else if(tradein<10000) valueScore=85;
-else if(tradein<15000) valueScore=65;
-else if(tradein<20000) valueScore=50;
-else if(tradein<25000) valueScore=35;
-else valueScore=20;
+if(tradein>=25000) valueScore=90;
+else if(tradein>=20000) valueScore=75;
+else if(tradein>=15000) valueScore=55;
+else if(tradein>=10000) valueScore=40;
+else if(tradein>=7000) valueScore=60;
+else valueScore=85;
 
-let totalScore = Math.round(
-batteryScore*0.25 +
-ageScore*0.40 +
-condScore*0.15 +
-valueScore*0.20
-);
-
-// 異常低價：強制修改所有分數
 if(isAbnormallyLow) {
 totalScore = 25;
 ageScore = 25;
@@ -596,13 +694,11 @@ batteryScore = 20;
 condScore = 30;
 }
 
-// 顯示分數
 document.getElementById("scoreNum").textContent = totalScore;
 document.getElementById("ageScore").textContent = ageScore;
 document.getElementById("condScore").textContent = condScore;
 document.getElementById("valueScore").textContent = valueScore;
 
-// 建議標籤
 const badge = document.getElementById("recBadge");
 if(isAbnormallyLow){
 badge.textContent = "⚠️ 回收價異常偏低，不建議回收";
@@ -626,7 +722,6 @@ badge.style.background = "";
 badge.style.color = "";
 }
 
-// 電池分析
 const batteryBar = document.getElementById("batteryBar");
 const batteryColor = battery>=85 ? "#30d158" : battery>=80 ? "#ff9f0a" : "#ff3b30";
 batteryBar.style.width = battery + "%";
@@ -636,87 +731,4 @@ const batteryText = document.getElementById("batteryText");
 if(battery>=90){
 batteryText.textContent = `電池健康度優秀（${battery}%），續航表現良好，預計仍可正常使用 1-2 年。`;
 }else if(battery>=80){
-batteryText.textContent = `電池健康度尚可（${battery}%），有自然衰退，建議關注續航表現變化。`;
-}else{
-batteryText.textContent = `電池健康度偏低（${battery}%），續航明顯下降，可能需要更換電池或考慮換機。`;
-}
-
-// 世代分析
-const generationText = document.getElementById("generationText");
-if(isAbnormallyLow){
-generationText.textContent = `⚠️ 注意：您的 ${model}（機齡 ${age} 年）回收價 NT${tradein.toLocaleString()} 明顯低於市場行情，與同機齡同機型的一般價格相比極不合理。如此低價可能代表設備有嚴重損壞或報價異常。`;
-}else if(age<=1){
-generationText.textContent = `機齡：${age} 年，屬於次新世代機型。支援最新 iOS 功能，軟體更新無虞，回收價值已從高峰開始回落。`;
-}else if(age<=2){
-generationText.textContent = `機齡：${age} 年，屬於兩代前機型。主流應用完全支援，性能充足，回收價值進入遞減期。`;
-}else if(age<=3){
-generationText.textContent = `機齡：${age} 年，已進入世代交替階段。部分新功能可能不支援，回收價值持續下滑中。`;
-}else{
-generationText.textContent = `機齡：${age} 年以上，屬於較舊世代。與現行旗艦機型差距明顯，回收價值已接近底部。`;
-}
-
-// 價值分析
-const priceText = document.getElementById("priceText");
-if(isAbnormallyLow){
-priceText.textContent = `⚠️ 警告：回收價 NT${tradein.toLocaleString()} 明顯低於 ${model} 的市場行情，與同機齡同機型的一般價格相比極不合理。這個價格代表設備可能有嚴重損壞，或報價異常偏低。在此價格下強烈不建議回收，建議尋求其他管道重新評估或先送修。`;
-}else{
-const avgDaily = Math.round(tradein / 365);
-if(tradein>=20000){
-priceText.textContent = `回收價 NT${tradein.toLocaleString()}，仍具高轉換價值，相當於日均持有成本約 NT${avgDaily}。建議把握價格高點進行回收。`;
-}else if(tradein>=12000){
-priceText.textContent = `回收價 NT${tradein.toLocaleString()}，處於合理區間，相當於日均持有成本約 NT${avgDaily}。可依使用需求決定回收時機。`;
-}else if(tradein>=7000){
-priceText.textContent = `回收價 NT${tradein.toLocaleString()}，已進入低價區，相當於日均持有成本約 NT${avgDaily}。價值流失速度加快。`;
-}else{
-priceText.textContent = `回收價 NT${tradein.toLocaleString()}，接近殘值。繼續持有價值遞減有限，建議評估是否作為備用機使用。`;
-}
-}
-
-// AI 分析（簡化版，不依賴外部 API）
-try{
-const aiData = {
-model: model,
-age: age,
-battery: battery,
-conditionText: getConditionText(conditionVal),
-tradein: tradein,
-totalScore: totalScore,
-userNote: userNote,
-isAbnormallyLow: isAbnormallyLow
-};
-
-const aiRecommendation = await getAIRecommendation(aiData);
-document.getElementById("aiRecommendation").textContent = aiRecommendation;
-}catch(error){
-console.error('AI 分析錯誤:', error);
-document.getElementById("aiRecommendation").textContent = "AI 分析暫時無法使用，請參考其他分析卡片的資訊。";
-}
-
-// 新機比較
-const models = [
-{name:"iPhone 17", price:29900},
-{name:"iPhone 17 Pro", price:39900},
-{name:"iPhone 17 Pro Max", price:44900}
-];
-
-const tbody = document.getElementById("financeBody");
-tbody.innerHTML = "";
-models.forEach(m => {
-const gap = m.price - tradein;
-const daily = Math.round(gap / 365);
-tbody.innerHTML += `
-<tr>
-<td class="model-name">${m.name}</td>
-<td>NT$${m.price.toLocaleString()}</td>
-<td class="price-tag">NT$${gap.toLocaleString()}</td>
-<td class="daily-blue">NT$${daily}/天</td>
-</tr>`;
-});
-
-btn.disabled = false;
-btn.innerHTML = '🚀 開始 AI 智能分析';
-}
-</script>
-
-</body>
-</html>
+battery
