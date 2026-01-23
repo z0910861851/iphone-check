@@ -411,10 +411,124 @@ color:#30d158;
 .stat-grid{grid-template-columns:1fr;}
 .advisor-grid{grid-template-columns:1fr;}
 }
+
+/* 設備驗證樣式 */
+.auth-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+backdrop-filter:blur(10px);
+-webkit-backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.auth-overlay.hidden{
+display:none;
+}
+
+.auth-card{
+background:#fff;
+border-radius:24px;
+padding:40px;
+text-align:center;
+max-width:360px;
+width:90%;
+box-shadow:0 20px 60px rgba(0,0,0,0.3);
+animation:authFadeIn 0.4s ease;
+}
+
+@keyframes authFadeIn{
+from{opacity:0;transform:scale(0.9) translateY(20px);}
+to{opacity:1;transform:scale(1) translateY(0);}
+}
+
+.auth-icon{
+font-size:64px;
+margin-bottom:16px;
+}
+
+.auth-card h2{
+margin:0 0 8px;
+font-size:24px;
+font-weight:700;
+color:#1d1d1f;
+}
+
+.auth-card p{
+margin:0 0 24px;
+font-size:14px;
+color:#86868b;
+}
+
+.auth-input{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:2px solid #e5e5e7;
+font-size:16px;
+text-align:center;
+margin-bottom:16px;
+transition:all 0.3s;
+}
+
+.auth-input:focus{
+outline:none;
+border-color:var(--apple-blue);
+box-shadow:0 0 0 4px rgba(0,113,227,0.1);
+}
+
+.auth-btn{
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+background:var(--apple-blue);
+color:#fff;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+transition:all 0.3s;
+}
+
+.auth-btn:hover{
+background:#0077ed;
+transform:translateY(-1px);
+}
+
+.auth-error{
+margin-top:16px;
+color:#ff3b30;
+font-size:14px;
+font-weight:500;
+min-height:20px;
+}
+
+.auth-success{
+color:#30d158;
+}
 </style>
 </head>
 
 <body>
+
+<!-- 設備驗證遮罩 -->
+<div id="authOverlay" class="auth-overlay">
+<div class="auth-card">
+<div class="auth-icon">🔐</div>
+<h2>設備驗證</h2>
+<p>請輸入授權密碼以啟用此設備</p>
+<input type="password" id="authPassword" class="auth-input" placeholder="請輸入密碼" onkeypress="if(event.key==='Enter')verifyDevice()">
+<button class="auth-btn" onclick="verifyDevice()">驗證設備</button>
+<div id="authError" class="auth-error"></div>
+</div>
+</div>
+
 <div class="container">
 
 <h1>🤖 AI 舊換新智能分析<span class="ai-badge">AI Powered</span></h1>
@@ -549,6 +663,66 @@ color:#30d158;
 </div>
 
 <script>
+// ========== 設備驗證系統 ==========
+const AUTH_CONFIG = {
+password: "apple123",  // 👈 在這裡設定你的密碼
+storageKey: "device_authorized_token",
+tokenPrefix: "AUTH_"
+};
+
+// 產生設備專屬 token
+function generateDeviceToken() {
+const fingerprint = [
+navigator.userAgent,
+navigator.language,
+screen.width + 'x' + screen.height,
+new Date().getTimezoneOffset(),
+navigator.hardwareConcurrency || 'unknown'
+].join('|');
+let hash = 0;
+for (let i = 0; i < fingerprint.length; i++) {
+const char = fingerprint.charCodeAt(i);
+hash = ((hash << 5) - hash) + char;
+hash = hash & hash;
+}
+return AUTH_CONFIG.tokenPrefix + Math.abs(hash).toString(36);
+}
+
+// 檢查設備是否已驗證
+function checkDeviceAuth() {
+const savedToken = localStorage.getItem(AUTH_CONFIG.storageKey);
+const currentToken = generateDeviceToken();
+if (savedToken === currentToken) {
+document.getElementById('authOverlay').classList.add('hidden');
+return true;
+}
+return false;
+}
+
+// 驗證設備
+function verifyDevice() {
+const inputPassword = document.getElementById('authPassword').value;
+const errorEl = document.getElementById('authError');
+
+if (inputPassword === AUTH_CONFIG.password) {
+const token = generateDeviceToken();
+localStorage.setItem(AUTH_CONFIG.storageKey, token);
+errorEl.textContent = '✓ 驗證成功！';
+errorEl.className = 'auth-error auth-success';
+setTimeout(() => {
+document.getElementById('authOverlay').classList.add('hidden');
+}, 800);
+} else {
+errorEl.textContent = '密碼錯誤，請重新輸入';
+document.getElementById('authPassword').value = '';
+document.getElementById('authPassword').focus();
+}
+}
+
+// 頁面載入時檢查
+document.addEventListener('DOMContentLoaded', checkDeviceAuth);
+
+// ========== 主程式 ==========
 const advisorScripts = {
 category1: {
 name: "一、花費最少",
